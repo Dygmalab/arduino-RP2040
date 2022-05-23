@@ -154,15 +154,15 @@ constexpr Key addFlags(Key k, uint8_t add_flags) {
 typedef kaleidoscope::Key Key;
 typedef kaleidoscope::Key Key_;
 
-#define KEY_FLAGS         B00000000
-#define CTRL_HELD         B00000001
-#define LALT_HELD         B00000010
-#define RALT_HELD         B00000100
-#define SHIFT_HELD        B00001000
-#define GUI_HELD          B00010000
+#define KEY_FLAGS         0b00000000
+#define CTRL_HELD         0b00000001
+#define LALT_HELD         0b00000010
+#define RALT_HELD         0b00000100
+#define SHIFT_HELD        0b00001000
+#define GUI_HELD          0b00010000
 
-#define SYNTHETIC         B01000000
-#define RESERVED          B10000000
+#define SYNTHETIC         0b01000000
+#define RESERVED          0b10000000
 
 #define LCTRL(k)  kaleidoscope::addFlags(CONVERT_TO_KEY(k), CTRL_HELD)
 #define LALT(k)   kaleidoscope::addFlags(CONVERT_TO_KEY(k), LALT_HELD)
@@ -171,10 +171,10 @@ typedef kaleidoscope::Key Key_;
 #define LGUI(k)   kaleidoscope::addFlags(CONVERT_TO_KEY(k), GUI_HELD)
 
 // we assert that synthetic keys can never have keys held, so we reuse the _HELD bits
-#define IS_SYSCTL                  B00000001
-#define IS_INTERNAL                B00000010
-#define SWITCH_TO_KEYMAP           B00000100
-#define IS_CONSUMER                B00001000
+#define IS_SYSCTL                  0b00000001
+#define IS_INTERNAL                0b00000010
+#define SWITCH_TO_KEYMAP           0b00000100
+#define IS_CONSUMER                0b00001000
 
 // HID Usage Types: Because these constants, like the ones above, are
 // used in the flags byte of the Key class, they can't overlap any of
@@ -182,18 +182,18 @@ typedef kaleidoscope::Key Key_;
 // the HID usage type of a keycode, which leaves us with only two
 // bits. Since we don't currently do anything different based on HID
 // usage type, these are currently all set to zeroes.
-#define HID_TYPE_CA    B00000000
-#define HID_TYPE_CL    B00000000
-#define HID_TYPE_LC    B00000000
-#define HID_TYPE_MC    B00000000
-#define HID_TYPE_NARY  B00000000
-#define HID_TYPE_OOC   B00000000
-#define HID_TYPE_OSC   B00000000
-#define HID_TYPE_RTC   B00000000
-#define HID_TYPE_SEL   B00000000
-#define HID_TYPE_SV    B00000000
+#define HID_TYPE_CA    0b00000000
+#define HID_TYPE_CL    0b00000000
+#define HID_TYPE_LC    0b00000000
+#define HID_TYPE_MC    0b00000000
+#define HID_TYPE_NARY  0b00000000
+#define HID_TYPE_OOC   0b00000000
+#define HID_TYPE_OSC   0b00000000
+#define HID_TYPE_RTC   0b00000000
+#define HID_TYPE_SEL   0b00000000
+#define HID_TYPE_SV    0b00000000
 // Mask defining the allowed usage type flag bits:
-#define HID_TYPE_MASK  B00110000
+#define HID_TYPE_MASK  0b00110000
 
 
 #define Key_NoKey Key(0, KEY_FLAGS)
