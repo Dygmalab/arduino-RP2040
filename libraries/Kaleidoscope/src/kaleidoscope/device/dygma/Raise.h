@@ -19,6 +19,7 @@
 #pragma once
 
 #ifdef ARDUINO_SAMD_RAISE
+
 #include <Arduino.h>
 
 #include "kaleidoscope/device/dygma/raise/Hand.h"

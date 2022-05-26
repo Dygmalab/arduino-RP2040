@@ -19,9 +19,10 @@
 #pragma once
 
 #ifdef ARDUINO_RP2040_DEFY
+
 #include <Arduino.h>
 
-#include "kaleidoscope/device/dygma/raise/Hand.h"
+#include "kaleidoscope/device/dygma/DefyWired/Hand.h"
 
 #define CRGB(r,g,b) (cRGB){b, g, r}
 

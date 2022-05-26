@@ -21,6 +21,8 @@
 #define PUSB_h
 
 #include "USBAPI.h"
+#include "USB/USBDesc.h"
+#include "USB/USBCore.h"
 #include <stdint.h>
 #include <stddef.h>
 
