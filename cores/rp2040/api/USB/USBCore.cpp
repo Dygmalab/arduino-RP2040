@@ -26,6 +26,8 @@
 #include "Arduino.h"
 
 #include "api/USBAPI.h"
+#include "C:/Users/Juan Hauara/Documents/Arduino/hardware/wiredDefy/rp2040/libraries/Keyboard/src/Keyboard.h"
+#include "C:/Users/Juan Hauara/Documents/Arduino/hardware/wiredDefy/rp2040/libraries/Mouse/src/Mouse.h"
 
 extern "C" {
 	// RP2040 USB C libra
@@ -86,113 +88,3 @@ union EPDesc {
 #define USB_Send            USBCore().send
 #define USB_Recv            USBCore().recv
 #define USB_Flush           USBCore().flush
-
-template<size_t L>
-class EPBuffer
-{
-    public:
-        void init(uint8_t ep);
-
-        size_t push(const void* d, size_t len);
-        size_t pop(void* d, size_t len);
-        void reset();
-        size_t len();
-        size_t available();
-        size_t sendSpace();
-        void flush();
-        void markComplete();
-        uint8_t* ptr();
-        void enableOutEndpoint();
-
-        void transcIn();
-        void transcOut();
-
-    private:
-        void waitForWriteComplete();
-
-        uint8_t ep;
-        volatile uint8_t buf[L];
-        volatile uint8_t* tail = buf;
-        volatile uint8_t* p = buf;
-
-        // TODO: this should probably be explicitly atomic.
-        volatile bool rxWaiting = false;
-        volatile bool txWaiting = false;
-};
-
-template<size_t L, size_t C>
-class EPBuffers_
-{
-    public:
-        EPBuffers_();
-
-        EPBuffer<L>& buf(uint8_t ep);
-        void markComplete(uint8_t ep);
-
-        static EPDesc* desc(uint8_t ep);
-
-    private:
-        EPBuffer<L> epBufs[C];
-};
-
-EPBuffers_<USBD_EP0_MAX_SIZE, EP_COUNT>& EPBuffers();
-
-class USBCore_
-{
-    public:
-        USBCore_();
-
-        void connect();
-        void disconnect();
-
-        /*
-         * PluggableUSB interface.
-         */
-        int sendControl(uint8_t flags, const void* data, int len);
-        int recvControl(void* data, int len);
-        int recvControlLong(void* data, int len);
-        uint8_t available(uint8_t ep);
-        uint8_t sendSpace(uint8_t ep);
-        int send(uint8_t ep, const void* data, int len);
-        int recv(uint8_t ep, void* data, int len);
-        int recv(uint8_t ep);
-        int flush(uint8_t ep);
-
-        /*
-         * Static member function helpers called from ISR.
-         *
-         * These pull the core handle from ‘usbd’ and use it to call the
-         * instance member functions.
-         */
-        static void transcSetupHelper(usb_dev* usbd, uint8_t ep);
-        static void transcOutHelper(usb_dev* usbd, uint8_t ep);
-        static void transcInHelper(usb_dev* usbd, uint8_t ep);
-        static void transcUnknownHelper(usb_dev* usbd, uint8_t ep);
-
-    private:
-        // TODO: verify that this only applies to the control endpoint’s use of wLength
-        // I think this is only on the setup packet, so it should be fine.
-        uint16_t maxWrite = 0;
-
-        /*
-         * Pointers to the transaction routines specified by ‘usbd_init’.
-         */
-        void (*oldTranscSetup)(usb_dev* usbd, uint8_t ep);
-        void (*oldTranscOut)(usb_dev* usbd, uint8_t ep);
-        void (*oldTranscIn)(usb_dev* usbd, uint8_t ep);
-        void (*oldTranscUnknown)(usb_dev* usbd, uint8_t ep);
-
-        void transcSetup(usb_dev* usbd, uint8_t ep);
-        void transcOut(usb_dev* usbd, uint8_t ep);
-        void transcIn(usb_dev* usbd, uint8_t ep);
-        void transcUnknown(usb_dev* usbd, uint8_t ep);
-
-        void sendDeviceConfigDescriptor();
-        void sendDeviceStringDescriptor();
-
-        void sendStringDesc(const char *str);
-
-        void sendZLP(usb_dev* usbd, uint8_t ep);
-};
-
-USBCore_& USBCore();
