@@ -17,8 +17,8 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef __USBAPI__
-#define __USBAPI__
+#ifndef __USBAPI_RP2040__
+#define __USBAPI_RP2040__
 
 #include <stdint.h>
 
@@ -50,15 +50,15 @@ typedef struct __attribute__((packed))
 // USB APIs (C scope)
 //================================================================================
 
-int USB_SendControl(uint8_t flags, const void* d, int len);
-int USB_RecvControl(void* d, int len);
-int USB_RecvControlLong(void* d, int len);
+int rp2040_usb_sendControl(uint8_t flags, const void* d, int len);
+int rp2040_usb_recvControl(void* d, int len);
+//int USB_RecvControlLong(void* d, int len);
 
-uint8_t	USB_Available(uint8_t ep);
-uint8_t USB_SendSpace(uint8_t ep);
-int USB_Send(uint8_t ep, const void* data, int len);  // blocking
-int USB_Recv(uint8_t ep, void* data, int len);        // non-blocking
-int USB_Recv(uint8_t ep);                             // non-blocking
-void USB_Flush(uint8_t ep);
+uint8_t	rp2040_usb_available(uint8_t ep);
+//uint8_t USB_SendSpace(uint8_t ep);
+int rp2040_usb_send(uint8_t ep, const void* data, int len);  // blocking
+int rp2040_usb_recv(uint8_t ep, void* data, int len);        // non-blocking
+int rp2040_usb_recv(uint8_t ep);                             // non-blocking
+void rp2040_usb_flush(uint8_t ep);
 
 #endif

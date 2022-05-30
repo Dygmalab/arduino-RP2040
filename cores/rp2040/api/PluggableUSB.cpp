@@ -17,7 +17,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "USBAPI.h"
+#include "USBAPI_rp2040.h"
 #include "PluggableUSB.h"
 
 using namespace arduino;

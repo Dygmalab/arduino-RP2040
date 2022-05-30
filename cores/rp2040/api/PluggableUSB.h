@@ -20,7 +20,10 @@
 #ifndef PUSB_h
 #define PUSB_h
 
-#include "USBAPI.h"
+#if defined(ARDUINO_ARCH_RP2040)
+#include "USBAPI_rp2040.h"
+//#error "flag 1"
+#endif
 #include <stdint.h>
 #include <stddef.h>
 

@@ -133,19 +133,19 @@ int USB_SendControl(uint8_t x, const void* y, uint8_t z);
 
 #include "api/PluggableUSB.h"
 
-#define EPTYPE_DESCRIPTOR_SIZE      uint32_t
+#define EPTYPE_DESCRIPTOR_SIZE      unsigned int // uint32_t
 #define EP_TYPE_INTERRUPT_IN        USB_ENDPOINT_TYPE_INTERRUPT | USB_ENDPOINT_IN(0);
 #define EP_TYPE_INTERRUPT_OUT       USB_ENDPOINT_TYPE_INTERRUPT | USB_ENDPOINT_OUT(0);
-#define USB_EP_SIZE                 EPX_SIZE
-#define USB_SendControl             USB_SendControl // USBDevice.sendControl -> real C++ functions to take care of PGM overloading
-#define USB_Available               USB_Available // USBDevice.available
-#define USB_Recv                    USB_Recv
-#define USB_RecvControl             USB_RecvControl
-#define USB_Send                    USB_Send
-#define USB_Flush                   USB_Flush
+#define USB_EP_SIZE                 64 // 64 for Full Speed, EPT size max is 1024
 
+#define USB_SendControl             rp2040_usb_sendControl // USBDevice.sendControl -> real C++ functions to take care of PGM overloading
 /*int USB_SendControl(void* y, uint8_t z);
 int USB_SendControl(uint8_t x, const void* y, uint8_t z);*/
+#define USB_Available               rp2040_usb_available
+#define USB_Recv                    rp2040_usb_recv
+#define USB_RecvControl             rp2040_usb_recvControl
+#define USB_Send                    rp2040_usb_send
+#define USB_Flush                   rp2040_usb_flush
 
 #define TRANSFER_PGM                0
 #define TRANSFER_RELEASE            0

@@ -20,11 +20,15 @@
 
 #include <Arduino.h>
 
-#include "api/USBAPI.h"
+#include "api/PluggableUSB.h"
+
 //#include "USBAPI.h"
 //#include "SAMD21_USBDevice.h"
 //#include "CDC.h"
-#include "api/PluggableUSB.h"
+#if defined(ARDUINO_ARCH_RP2040)
+#include "api/USBAPI_rp2040.h"
+//#error "flag 2"
+#endif
 
 #include <stdlib.h>
 #include <stdio.h>

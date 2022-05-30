@@ -35,7 +35,7 @@
 #include "String.h"
 #include "Stream.h"
 #include "Udp.h"
-#include "USBAPI.h"
+#include "USBAPI_rp2040.h"
 #include "WCharacter.h"
 #endif
 
