@@ -137,15 +137,15 @@ int USB_SendControl(uint8_t x, const void* y, uint8_t z);
 #define EP_TYPE_INTERRUPT_IN        USB_ENDPOINT_TYPE_INTERRUPT | USB_ENDPOINT_IN(0);
 #define EP_TYPE_INTERRUPT_OUT       USB_ENDPOINT_TYPE_INTERRUPT | USB_ENDPOINT_OUT(0);
 #define USB_EP_SIZE                 EPX_SIZE
-//#define USB_SendControl           USBDevice.sendControl -> real C++ functions to take care of PGM overloading
-#define USB_Available               USBDevice.available
-#define USB_Recv                    USBDevice.recv
-#define USB_RecvControl             USBDevice.recvControl
-#define USB_Send                    USBDevice.send
-#define USB_Flush                   USBDevice.flush
+#define USB_SendControl             USB_SendControl // USBDevice.sendControl -> real C++ functions to take care of PGM overloading
+#define USB_Available               USB_Available // USBDevice.available
+#define USB_Recv                    USB_Recv
+#define USB_RecvControl             USB_RecvControl
+#define USB_Send                    USB_Send
+#define USB_Flush                   USB_Flush
 
-int USB_SendControl(void* y, uint8_t z);
-int USB_SendControl(uint8_t x, const void* y, uint8_t z);
+/*int USB_SendControl(void* y, uint8_t z);
+int USB_SendControl(uint8_t x, const void* y, uint8_t z);*/
 
 #define TRANSFER_PGM                0
 #define TRANSFER_RELEASE            0
