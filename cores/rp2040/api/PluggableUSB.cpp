@@ -15,6 +15,8 @@
 */
 
 #include "USBAPI.h"
+#include "USBDesc.h"
+#include "USBCore.h"
 #include "PluggableUSB.h"
 
 using namespace arduino;

@@ -105,6 +105,11 @@ extern bool __isFreeRTOS;
 #include "SerialPIO.h"
 #include "Bootsel.h"
 
+// USB Device
+#include "api/USBDesc.h"
+#include "api/USBCore.h"
+#include "api/USBAPI.h"
+
 // Template which will evaluate at *compile time* to a single 32b number
 // with the specified bits set.
 template <size_t N>

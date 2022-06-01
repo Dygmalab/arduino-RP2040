@@ -128,7 +128,6 @@ int USB_SendControl(uint8_t x, const void* y, uint8_t z);
 
 #define EPTYPE_DESCRIPTOR_SIZE      unsigned int
 
-
 // Should eventually get defined upstream
 #ifndef USB_DEVICE_CLASS_HUMAN_INTERFACE
 #define USB_DEVICE_CLASS_HUMAN_INTERFACE       0x03
@@ -139,11 +138,32 @@ int USB_SendControl(uint8_t x, const void* y, uint8_t z);
 constexpr uint16_t EP_TYPE_INTERRUPT_IN(uint8_t buffer_size) { return EPDesc(USB_TRX_IN, USB_EP_ATTR_INT, buffer_size).val; }
 constexpr uint16_t EP_TYPE_INTERRUPT_OUT(uint8_t buffer_size) { return EPDesc(USB_TRX_OUT, USB_EP_ATTR_INT, buffer_size).val; }
 
-#elif defined(ARDUINO_ARCH_GRP2040)
+#elif defined(ARDUINO_ARCH_RP2040)
 
 //#include "USBCore.h"
+//#include <api/PluggableUSB.h>
 
 #define EPTYPE_DESCRIPTOR_SIZE unsigned int
+#define USB_EP_SIZE 64
+#define TRANSFER_PGM 0      // Error de compilación si no se define
+#define TRANSFER_RELEASE 0  // Error de compilación si no se define
+
+/*
+ * Mappings from Arduino USB API to USBCore singleton functions.
+ */
+/*
+#define TRANSFER_PGM     0x80
+#define TRANSFER_ZERO    0x20
+#define TRANSFER_RELEASE 0x40*/
+
+/*#define USB_SendControl     USBCore().sendControl
+#define USB_RecvControl     USBCore().recvControl
+#define USB_RecvControlLong USBCore().recvControlLong
+#define USB_Available       USBCore().available
+#define USB_SendSpace       USBCore().sendSpace
+#define USB_Send            USBCore().send
+#define USB_Recv            USBCore().recv
+#define USB_Flush           USBCore().flush*/
 
 // Should eventually get defined upstream
 #ifndef USB_DEVICE_CLASS_HUMAN_INTERFACE
@@ -153,8 +173,11 @@ constexpr uint16_t EP_TYPE_INTERRUPT_OUT(uint8_t buffer_size) { return EPDesc(US
 
 //#define ARCH_HAS_CONFIGURABLE_EP_SIZES
 
+// Error de compilación si no se definen
 //constexpr uint16_t EP_TYPE_INTERRUPT_IN(uint8_t buffer_size) { return EPDesc(USB_TRX_IN, USB_EP_ATTR_INT, buffer_size).val; }
 //constexpr uint16_t EP_TYPE_INTERRUPT_OUT(uint8_t buffer_size) { return EPDesc(USB_TRX_OUT, USB_EP_ATTR_INT, buffer_size).val; }
+#define EP_TYPE_INTERRUPT_IN 0;
+#define EP_TYPE_INTERRUPT_OUT 0;
 
 #else
 
