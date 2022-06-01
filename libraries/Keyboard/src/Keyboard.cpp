@@ -96,8 +96,8 @@ size_t Keyboard_::press(uint8_t k)
 		_keyReport.keys[4] != k && _keyReport.keys[5] != k) {
 
 		for (i=0; i<6; i++) {
-			if (_keyReport.keys[i] == 0x00) {
-				_keyReport.keys[i] = k;
+			if (_keyReport.keys[i] == 0x00) {	// if this slot is empty
+				_keyReport.keys[i] = k;			// add the key
 				break;
 			}
 		}

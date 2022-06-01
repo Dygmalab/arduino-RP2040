@@ -22,7 +22,6 @@
 #include <stdint.h>
 #include <Arduino.h>
 #include "HID-Settings.h"
-#include "api/USB/USBCore.h"
 
 #if defined(USBCON)
 

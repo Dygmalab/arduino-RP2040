@@ -129,12 +129,6 @@ int USB_SendControl(uint8_t x, const void* y, uint8_t z);
 #define HID_REPORT_TYPE_OUTPUT      2
 #define HID_REPORT_TYPE_FEATURE     3
 
-#elif defined(ARDUINO_ARCH_RP2040)
-
-#include "api/PluggableUSB.h"
-
-#define EPTYPE_DESCRIPTOR_SIZE      unsigned int // uint32_t
-
 #else
 
 #error "Unsupported architecture"
