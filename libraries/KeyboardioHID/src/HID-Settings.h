@@ -1,19 +1,15 @@
 /*
 Copyright (c) 2014-2015 NicoHood
 Copyright (c) 2015-2018 Keyboard.io, Inc
-
 See the readme for credit to other people.
-
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
-
 The above copyright notice and this permission notice shall be included in
 all copies or substantial portions of the Software.
-
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,6 +21,7 @@ THE SOFTWARE.
 
 // Include guard
 #pragma once
+
 
 #define HID_REPORTID_NONE 0
 
@@ -77,13 +74,13 @@ void USB_PackMessages(bool pack);
 
 #if defined(ARDUINO_ARCH_AVR)
 
-#include "PluggableUSB.h"
+#include <PluggableUSB.h>
 
 #define EPTYPE_DESCRIPTOR_SIZE      uint8_t
 
 #elif defined(ARDUINO_ARCH_SAM)
 
-#include "USB/PluggableUSB.h"
+#include <PluggableUSB.h>
 
 #define EPTYPE_DESCRIPTOR_SIZE      uint32_t
 #define EP_TYPE_INTERRUPT_IN        (UOTGHS_DEVEPTCFG_EPSIZE_512_BYTE | \
@@ -106,7 +103,7 @@ void USB_PackMessages(bool pack);
 
 #elif defined(ARDUINO_ARCH_SAMD)
 
-#include "USB/PluggableUSB.h"
+#include <PluggableUSB.h>
 
 #define EPTYPE_DESCRIPTOR_SIZE      uint32_t
 #define EP_TYPE_INTERRUPT_IN        USB_ENDPOINT_TYPE_INTERRUPT | USB_ENDPOINT_IN(0);
@@ -125,9 +122,39 @@ int USB_SendControl(uint8_t x, const void* y, uint8_t z);
 #define TRANSFER_PGM                0
 #define TRANSFER_RELEASE            0
 
-#define HID_REPORT_TYPE_INPUT       1
-#define HID_REPORT_TYPE_OUTPUT      2
-#define HID_REPORT_TYPE_FEATURE     3
+#elif defined(ARDUINO_ARCH_GD32)
+
+#include "USBCore.h"
+
+#define EPTYPE_DESCRIPTOR_SIZE      unsigned int
+
+
+// Should eventually get defined upstream
+#ifndef USB_DEVICE_CLASS_HUMAN_INTERFACE
+#define USB_DEVICE_CLASS_HUMAN_INTERFACE       0x03
+#endif
+
+#define ARCH_HAS_CONFIGURABLE_EP_SIZES
+
+constexpr uint16_t EP_TYPE_INTERRUPT_IN(uint8_t buffer_size) { return EPDesc(USB_TRX_IN, USB_EP_ATTR_INT, buffer_size).val; }
+constexpr uint16_t EP_TYPE_INTERRUPT_OUT(uint8_t buffer_size) { return EPDesc(USB_TRX_OUT, USB_EP_ATTR_INT, buffer_size).val; }
+
+#elif defined(ARDUINO_ARCH_GRP2040)
+
+//#include "USBCore.h"
+
+#define EPTYPE_DESCRIPTOR_SIZE unsigned int
+
+// Should eventually get defined upstream
+#ifndef USB_DEVICE_CLASS_HUMAN_INTERFACE
+// The bInterfaceClass member of an Interface descriptor is always 3 for HID class devices.
+#define USB_DEVICE_CLASS_HUMAN_INTERFACE 0x03
+#endif
+
+//#define ARCH_HAS_CONFIGURABLE_EP_SIZES
+
+//constexpr uint16_t EP_TYPE_INTERRUPT_IN(uint8_t buffer_size) { return EPDesc(USB_TRX_IN, USB_EP_ATTR_INT, buffer_size).val; }
+//constexpr uint16_t EP_TYPE_INTERRUPT_OUT(uint8_t buffer_size) { return EPDesc(USB_TRX_OUT, USB_EP_ATTR_INT, buffer_size).val; }
 
 #else
 
