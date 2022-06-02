@@ -27,12 +27,14 @@ int32_t Usb_rp2040::send(uint8_t ep, const void *data, int32_t len)
 // sent, or -1 on error.
 int32_t Usb_rp2040::sendControl(uint8_t flags, const void *d, int32_t len)
 {
+    (void)flags;
+    
     int32_t ret = send(0, d, len);
 
     // DEBUG
 	/*digitalWrite(LED_BUILTIN, HIGH);
 	delay(150);
 	digitalWrite(LED_BUILTIN, LOW);*/
-    
+
     return ret;
 }
