@@ -22,7 +22,6 @@ THE SOFTWARE.
 // Include guard
 #pragma once
 
-
 #define HID_REPORTID_NONE 0
 
 #ifndef HID_REPORTID_MOUSE
@@ -142,6 +141,7 @@ constexpr uint16_t EP_TYPE_INTERRUPT_OUT(uint8_t buffer_size) { return EPDesc(US
 
 //#include "USBCore.h"
 //#include <api/PluggableUSB.h>
+#include "api/Usb_rp2040.h"
 
 #define EPTYPE_DESCRIPTOR_SIZE unsigned int
 #define USB_EP_SIZE 64
@@ -156,14 +156,15 @@ constexpr uint16_t EP_TYPE_INTERRUPT_OUT(uint8_t buffer_size) { return EPDesc(US
 #define TRANSFER_ZERO    0x20
 #define TRANSFER_RELEASE 0x40*/
 
-/*#define USB_SendControl     USBCore().sendControl
-#define USB_RecvControl     USBCore().recvControl
-#define USB_RecvControlLong USBCore().recvControlLong
-#define USB_Available       USBCore().available
-#define USB_SendSpace       USBCore().sendSpace
-#define USB_Send            USBCore().send
-#define USB_Recv            USBCore().recv
-#define USB_Flush           USBCore().flush*/
+Usb_rp2040 usb_rp2040;
+//#define USB_SendControl       USBCore().sendControl
+//#define USB_RecvControl       USBCore().recvControl
+//#define USB_RecvControlLong   USBCore().recvControlLong
+//#define USB_Available         USBCore().available
+//#define USB_SendSpace         USBCore().sendSpace
+#define USB_Send                usb_rp2040.send
+//#define USB_Recv              USBCore().recv
+//#define USB_Flush             USBCore().flush
 
 // Should eventually get defined upstream
 #ifndef USB_DEVICE_CLASS_HUMAN_INTERFACE

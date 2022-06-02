@@ -84,9 +84,9 @@ typedef enum
 typedef enum
 {
   HID_REPORT_TYPE_INVALID = 0,
-  HID_REPORT_TYPE_INPUT,      ///< Input
-  HID_REPORT_TYPE_OUTPUT,     ///< Output
-  HID_REPORT_TYPE_FEATURE     ///< Feature
+  TUSB_HID_REPORT_TYPE_INPUT,      ///< Input
+  TUSB_TUSB_HID_REPORT_TYPE_OUTPUT,     ///< Output
+  TUSB_HID_REPORT_TYPE_FEATURE     ///< Feature
 }hid_report_type_t;
 
 /// HID Class Specific Control Request
