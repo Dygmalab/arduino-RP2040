@@ -157,7 +157,7 @@ constexpr uint16_t EP_TYPE_INTERRUPT_OUT(uint8_t buffer_size) { return EPDesc(US
 #define TRANSFER_RELEASE 0x40*/
 
 Usb_rp2040 usb_rp2040;
-//#define USB_SendControl       USBCore().sendControl
+#define USB_SendControl         usb_rp2040.sendControl
 //#define USB_RecvControl       USBCore().recvControl
 //#define USB_RecvControlLong   USBCore().recvControlLong
 //#define USB_Available         USBCore().available

@@ -89,7 +89,7 @@ bool tud_hid_n_report(uint8_t instance, uint8_t report_id, void const* report, u
   TU_VERIFY( usbd_edpt_claim(rhport, p_hid->ep_in) );
 
   // prepare data
-  if (report_id)
+  if (report_id)  // If report id != 0, doesn't skip ID field.
   {
     len = tu_min8(len, CFG_TUD_HID_EP_BUFSIZE-1);
 
@@ -98,7 +98,7 @@ bool tud_hid_n_report(uint8_t instance, uint8_t report_id, void const* report, u
     len++;
   }else
   {
-    // If report id = 0, skip ID field
+    // If report id = 0, skip ID field.
     len = tu_min8(len, CFG_TUD_HID_EP_BUFSIZE);
     memcpy(p_hid->epin_buf, report, len);
   }

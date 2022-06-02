@@ -5,17 +5,34 @@
 
 Usb_rp2040::Usb_rp2040() {}
 
-uint32_t Usb_rp2040::send(uint32_t ep, const void *data, uint32_t len)
+int32_t Usb_rp2040::send(uint8_t ep, const void *data, int32_t len)
 {
     /*
         bool tud_hid_n_report(uint8_t instance, uint8_t report_id, void const* report, uint8_t len)
 
         Declared in Documents\Arduino\hardware\wiredDefy\rp2040\pico-sdk\lib\tinyusb\src\class\hid\hid_device.c
     */
-    tud_hid_n_report(0, 1, data, (uint8_t)len);
-	digitalWrite(LED_BUILTIN, HIGH);
-	delay(100);
-	digitalWrite(LED_BUILTIN, LOW);
+    bool ret = tud_hid_n_report(0, 1, data, (uint8_t)len);
 
-    return 0;
+    // DEBUG
+	/*digitalWrite(LED_BUILTIN, HIGH);
+	delay(150);
+	digitalWrite(LED_BUILTIN, LOW);*/
+
+    return (int32_t)ret;
+}
+
+// Send ‘len’ octets of ‘d’ through the control pipe (endpoint 0).
+// Blocks until ‘len’ octets are sent. Returns the number of octets
+// sent, or -1 on error.
+int32_t Usb_rp2040::sendControl(uint8_t flags, const void *d, int32_t len)
+{
+    int32_t ret = send(0, d, len);
+
+    // DEBUG
+	/*digitalWrite(LED_BUILTIN, HIGH);
+	delay(150);
+	digitalWrite(LED_BUILTIN, LOW);*/
+    
+    return ret;
 }

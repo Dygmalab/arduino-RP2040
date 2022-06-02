@@ -10,7 +10,8 @@ class Usb_rp2040
 public:
     Usb_rp2040();
 
-    uint32_t send(uint32_t ep, const void *data, uint32_t len);
+    int32_t send(uint8_t ep, const void *data, int32_t len);
+    int32_t sendControl(uint8_t flags, const void *d, int32_t len);
 };
 
 #endif
