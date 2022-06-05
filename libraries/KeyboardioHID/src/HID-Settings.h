@@ -158,12 +158,12 @@ constexpr uint16_t EP_TYPE_INTERRUPT_OUT(uint8_t buffer_size) { return EPDesc(US
 
 Usb_rp2040 usb_rp2040;
 #define USB_SendControl         usb_rp2040.sendControl
-//#define USB_RecvControl       USBCore().recvControl
-//#define USB_RecvControlLong   USBCore().recvControlLong
+#define USB_RecvControl         usb_rp2040.recvControl
+#define USB_RecvControlLong     usb_rp2040.recvControlLong
 //#define USB_Available         USBCore().available
 //#define USB_SendSpace         USBCore().sendSpace
 #define USB_Send                usb_rp2040.send
-//#define USB_Recv              USBCore().recv
+#define USB_Recv                usb_rp2040.recv
 //#define USB_Flush             USBCore().flush
 
 // Should eventually get defined upstream

@@ -98,7 +98,7 @@ class HID_ : public PluggableUSBModule {
     };
 
   protected:
-    // Implementation of the PluggableUSBModule
+    // Implementation of the PluggableUSBModule (métodos virtuales puros de la clase PluggableUSBModule)
     int getInterface(uint8_t* interfaceCount);
     int getDescriptor(USBSetup& setup);
     bool setup(USBSetup& setup);

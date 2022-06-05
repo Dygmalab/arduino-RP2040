@@ -305,11 +305,12 @@ void __USBStart() {
     add_alarm_in_us(USB_TASK_INTERVAL, timer_task, NULL, true);
 }
 
-
+extern "C"
+{
 // Invoked when received GET_REPORT control request
 // Application must fill buffer report's content and return its length.
 // Return zero will cause the stack to STALL request
-extern "C" uint16_t tud_hid_get_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_t report_type, uint8_t* buffer, uint16_t reqlen) {
+uint16_t tud_hid_get_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_t report_type, uint8_t* buffer, uint16_t reqlen) {
     // TODO not implemented
     (void) instance;
     (void) report_id;
@@ -322,13 +323,19 @@ extern "C" uint16_t tud_hid_get_report_cb(uint8_t instance, uint8_t report_id, h
 
 // Invoked when received SET_REPORT control request or
 // received data on OUT endpoint ( Report ID = 0, Type = 0 )
-extern "C" void tud_hid_set_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_t report_type, uint8_t const* buffer, uint16_t bufsize) {
+__attribute__ ((weak)) void tud_hid_set_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_t report_type, uint8_t const* buffer, uint16_t bufsize) {
     // TODO set LED based on CAPLOCK, NUMLOCK etc...
     (void) instance;
     (void) report_id;
     (void) report_type;
     (void) buffer;
     (void) bufsize;
+
+	// DEBUG
+	/*digitalWrite(LED_BUILTIN, HIGH);
+	for (uint32_t i = 0; i < 5000000; i++);
+	digitalWrite(LED_BUILTIN, LOW);*/
+}
 }
 
 #endif

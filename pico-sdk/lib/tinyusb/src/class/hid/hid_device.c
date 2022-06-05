@@ -383,6 +383,11 @@ bool hidd_control_xfer_cb (uint8_t rhport, uint8_t stage, tusb_control_request_t
 
 bool hidd_xfer_cb(uint8_t rhport, uint8_t ep_addr, xfer_result_t result, uint32_t xferred_bytes)
 {
+	// DEBUG
+	/*digitalWrite(LED_BUILTIN, HIGH);
+	for (uint32_t i = 0; i < 3000000; i++);
+	digitalWrite(LED_BUILTIN, LOW);*/
+
   (void) result;
 
   uint8_t instance = 0;
@@ -404,8 +409,7 @@ bool hidd_xfer_cb(uint8_t rhport, uint8_t ep_addr, xfer_result_t result, uint32_
       tud_hid_report_complete_cb(instance, p_hid->epin_buf, (uint8_t) xferred_bytes);
     }
   }
-  // Received report
-  else if (ep_addr == p_hid->ep_out)
+  else if (ep_addr == p_hid->ep_out)  // Received report
   {
     tud_hid_set_report_cb(instance, 0, HID_REPORT_TYPE_INVALID, p_hid->epout_buf, xferred_bytes);
     TU_ASSERT(usbd_edpt_xfer(rhport, p_hid->ep_out, p_hid->epout_buf, sizeof(p_hid->epout_buf)));
