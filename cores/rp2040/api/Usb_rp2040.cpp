@@ -235,17 +235,40 @@ int32_t Usb_rp2040::recvControlLong(void *data, int32_t len)
 
 // kaleidoscope needs this function being defined.
 // Returns a pointer to the Nth element of the EP buffer structure.
-void * epBuffer(unsigned int n)
-{
-    if (n == 1)
-    {
-        return (void *)&usb_rp2040.usb.keyboard_itf.in_ep;  // Input Endpoint: Periferal to PC.
-    }
-    else if (n == 2)
-    {
-        return (void *)&usb_rp2040.usb.mouse_itf.in_ep;     // Input Endpoint: Periferal to PC.
-    }
+// void * epBuffer(unsigned int n)
+// {
+//     if (n == 1)
+//     {
+//         return (void *)&usb_rp2040.usb.keyboard_itf.in_ep;  // Input Endpoint: Periferal to PC.
+//     }
+//     else if (n == 2)
+//     {
+//         return (void *)&usb_rp2040.usb.mouse_itf.in_ep;     // Input Endpoint: Periferal to PC.
+//     }
 
-    return nullptr;
-}
+//     return nullptr;
+// }
 ////////////////////////////////////////////////////////////////////////
+
+
+// kaleidoscope needs this array being defined.
+uint32_t EndPoints[] =
+{
+	USB_ENDPOINT_TYPE_CONTROL,
+
+#ifdef CDC_ENABLED
+	USB_ENDPOINT_TYPE_INTERRUPT | USB_ENDPOINT_IN(0),           // CDC_ENDPOINT_ACM
+	USB_ENDPOINT_TYPE_BULK      | USB_ENDPOINT_OUT(0),               // CDC_ENDPOINT_OUT
+	USB_ENDPOINT_TYPE_BULK | USB_ENDPOINT_IN(0),                // CDC_ENDPOINT_IN
+#endif
+
+#ifdef PLUGGABLE_USB_ENABLED
+	//allocate 6 endpoints and remove const so they can be changed by the user
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+#endif
+};

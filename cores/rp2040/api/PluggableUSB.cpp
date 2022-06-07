@@ -1,23 +1,32 @@
 /*
   PluggableUSB.cpp
   Copyright (c) 2015 Arduino LLC
+
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
   version 2.1 of the License, or (at your option) any later version.
+
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
+
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "USBAPI.h"
+#include "USBDesc.h"
+#include "USBCore.h"
 #include "PluggableUSB.h"
 
 using namespace arduino;
+
+#ifdef PLUGGABLE_USB_ENABLED
+
+extern uint32_t EndPoints[];
 
 int PluggableUSB_::getInterface(uint8_t* interfaceCount)
 {
@@ -32,7 +41,7 @@ int PluggableUSB_::getInterface(uint8_t* interfaceCount)
 	return sent;
 }
 
-int PluggableUSB_::getDescriptor(USBSetup& setup)
+int PluggableUSB_::getDescriptor(USBSetup &setup)
 {
 	PluggableUSBModule* node;
 	for (node = rootNode; node; node = node->next) {
@@ -46,14 +55,14 @@ int PluggableUSB_::getDescriptor(USBSetup& setup)
 
 void PluggableUSB_::getShortName(char *iSerialNum)
 {
-	PluggableUSBModule* node;
-	for (node = rootNode; node; node = node->next) {
-		iSerialNum += node->getShortName(iSerialNum);
-	}
-	*iSerialNum = 0;
+       PluggableUSBModule* node;
+       for (node = rootNode; node; node = node->next) {
+               iSerialNum += node->getShortName(iSerialNum);
+       }
+       *iSerialNum = 0;
 }
 
-bool PluggableUSB_::setup(USBSetup& setup)
+bool PluggableUSB_::setup(USBSetup &setup)
 {
 	PluggableUSBModule* node;
 	for (node = rootNode; node; node = node->next) {
@@ -66,7 +75,7 @@ bool PluggableUSB_::setup(USBSetup& setup)
 
 bool PluggableUSB_::plug(PluggableUSBModule *node)
 {
-	if ((lastEp + node->numEndpoints) > totalEP) {
+	if ((lastEp + node->numEndpoints) > USB_ENDPOINTS) {
 		return false;
 	}
 
@@ -84,7 +93,7 @@ bool PluggableUSB_::plug(PluggableUSBModule *node)
 	node->pluggedEndpoint = lastEp;
 	lastIf += node->numInterfaces;
 	for (uint8_t i = 0; i < node->numEndpoints; i++) {
-		*(uint32_t *)(epBuffer(lastEp)) = node->endpointType[i];
+		EndPoints[lastEp] = node->endpointType[i];
 		lastEp++;
 	}
 	return true;
@@ -96,3 +105,12 @@ PluggableUSB_& PluggableUSB()
 	static PluggableUSB_ obj;
 	return obj;
 }
+
+PluggableUSB_::PluggableUSB_() : lastIf(CDC_ACM_INTERFACE + CDC_INTERFACE_COUNT),
+                                 lastEp(CDC_FIRST_ENDPOINT + CDC_ENPOINT_COUNT),
+                                 rootNode(nullptr)
+{
+	// Empty
+}
+
+#endif
