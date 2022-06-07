@@ -176,7 +176,7 @@ HID_::HID_(void) : PluggableUSBModule(1, 1, epType),
     setReportData.reportId = 0;
     setReportData.leds = 0;
     epType[0] = EP_TYPE_INTERRUPT_IN;
-    PluggableUSB().plug(this);
+    //PluggableUSB().plug(this);
 }
 
 int HID_::begin(void) {

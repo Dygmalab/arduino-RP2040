@@ -120,6 +120,14 @@ int __USBGetMouseReportID() {
     return __USBInstallKeyboard ? 2 : 1;
 }
 
+/*
+    It Creates an 'HID Report Descriptor' using TinyUSB's template
+    and returns a pointer to it and its length via 'len' parameter.
+
+    This templates are in:
+    Documents\Arduino\hardware\wiredDefy\rp2040\pico-sdk\lib\
+    tinyusb\src\class\hid\hid_device.h
+*/
 static uint8_t *GetDescHIDReport(int *len) {
     static uint8_t *report = nullptr;
     int report_len = 0;

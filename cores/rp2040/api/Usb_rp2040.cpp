@@ -2,27 +2,57 @@
 //#include "C:/Users/Juan Hauara/Documents/Arduino/hardware/wiredDefy/rp2040/libraries/Keyboard/src/Keyboard.h"
 //#include "C:/Users/Juan Hauara/Documents/Arduino/hardware/wiredDefy/rp2040/libraries/Mouse/src/Mouse.h"
 
+Usb_rp2040 usb_rp2040;
 
 Usb_rp2040::Usb_rp2040() {}
 
+uint8_t Usb_rp2040::map_endPoint_to_reportId(uint8_t ep)
+{
+    // Mappings from ep (endpoints) to rep (report ids)
+
+    if ((ep == 0) || (ep == 1)) // Control endpoint or keyboard endpoint.
+    {
+        return 1;               // REPORT_ID_KEYBOARD = 1;
+    }
+    else if (ep == 2)           // Mouse endpoint.
+    {
+        return 2;               // REPORT_ID_MOUSE = 2;
+    }
+    
+    return 0;
+}
 
 // Send
 ////////////////////////////////////////////////////////////////////////
 // Blocking send of data to an endpoint. Returns the number of octets
 // sent, or -1 on error.
 int32_t Usb_rp2040::send(uint8_t ep, const void *data, int32_t len)
-    {
+{
     /*
         bool tud_hid_n_report(uint8_t instance, uint8_t report_id, void const* report, uint8_t len)
 
         Declared in Documents\Arduino\hardware\wiredDefy\rp2040\pico-sdk\lib\tinyusb\src\class\hid\hid_device.c
+
+		El parámetro instance hace referencia a la instancia de interface o número de interface. 
+		instance = 0 -> Keyboard.
+		instance = 1 -> Mouse.
+
+        report_id:
+        ----------
+        REPORT_ID_KEYBOARD = 1
+        REPORT_ID_MOUSE = 2
+        REPORT_ID_CONSUMER_CONTROL = 3
+        REPORT_ID_GAMEPAD = 4
+        REPORT_ID_COUNT = 5
     */
-    bool ret = tud_hid_n_report(0, 1, data, (uint8_t)len);
+
+    uint8_t repId = this->map_endPoint_to_reportId(ep);
+    bool ret = tud_hid_n_report(0, repId, data, (uint8_t)len);
 
     // DEBUG
-    /*digitalWrite(LED_BUILTIN, HIGH);
-    delay(150);
-    digitalWrite(LED_BUILTIN, LOW);*/
+    /*gpio_put(PICO_DEFAULT_LED_PIN, 1);
+    sleep_ms(125);
+    gpio_put(PICO_DEFAULT_LED_PIN, 0);*/
 
     if (ret)
     {
@@ -39,9 +69,26 @@ int32_t Usb_rp2040::send(uint8_t ep, const void *data, int32_t len)
 // sent, or -1 on error.
 int32_t Usb_rp2040::sendControl(uint8_t flags, const void *d, int32_t len)
 {
-    (void)flags;
+    (void) flags;
     
-    int32_t ret = this->send(0, d, len);
+    /*
+        bool tud_hid_n_report(uint8_t instance, uint8_t report_id, void const* report, uint8_t len)
+
+        Declared in Documents\Arduino\hardware\wiredDefy\rp2040\pico-sdk\lib\tinyusb\src\class\hid\hid_device.c
+
+		El parámetro instance hace referencia a la instancia de interface o número de interface. 
+		instance = 0 -> Keyboard.
+		instance = 1 -> Mouse.
+		
+		report_id:
+		----------
+		REPORT_ID_KEYBOARD = 1
+		REPORT_ID_MOUSE = 2
+		REPORT_ID_CONSUMER_CONTROL = 3
+		REPORT_ID_GAMEPAD = 4
+		REPORT_ID_COUNT = 5
+    */
+    bool ret = tud_hid_n_report(0, 1, d, (uint8_t)len);
 
     // DEBUG
 	/*digitalWrite(LED_BUILTIN, HIGH);
@@ -50,25 +97,97 @@ int32_t Usb_rp2040::sendControl(uint8_t flags, const void *d, int32_t len)
 
     return ret;
 }
+
+
+/*
+    Kaleidoscope neds overloading for this two functions although the parameter 'uint8_t x' -> 
+    'flags' (TRANSFER_PGM) is ignored.
+
+    USB_SendControl(0, &hidInterface, sizeof(hidInterface))
+    USB_SendControl(TRANSFER_PGM, node->data, node->length)
+
+    For SAMD, TRANSFER_PGM parameter in 'int USB_SendControl(uint8_t x, const void* y, uint8_t z)'
+    function is ignored. 
+    See: Documents\Arduino\hardware\wiredDefy\rp2040\libraries\KeyboardioHID\src\arch\samd.cpp
+*/
+int USB_SendControl(void* y, uint8_t z)
+{
+    // Send ‘len’ octets of ‘d’ through the control pipe (endpoint 0).
+    // Blocks until ‘len’ octets are sent. Returns the number of octets
+    // sent, or -1 on error.
+    return usb_rp2040.sendControl(0, y, z);    // The parameter 'flags' (TRANSFER_PGM) is ignored
+}
+
+int USB_SendControl(uint8_t x, const void* y, uint8_t z)
+{
+    (void)x;
+
+    // Send ‘len’ octets of ‘d’ through the control pipe (endpoint 0).
+    // Blocks until ‘len’ octets are sent. Returns the number of octets
+    // sent, or -1 on error.
+    return usb_rp2040.sendControl(0, y, z);    // The parameter 'flags' (TRANSFER_PGM) is ignored
+}
+
+// kaleidoscope needs this function to be defined.
+void USB_PackMessages(bool pack)  // nop
+{
+    (void)pack;
+}
 ////////////////////////////////////////////////////////////////////////
 
 
 // Receive
 ////////////////////////////////////////////////////////////////////////
+// // Invoked when received SET_REPORT control request or
+// // received data on OUT endpoint
+void tud_hid_set_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_t report_type, uint8_t const *buffer, uint16_t bufsize)
+{
+    // DEBUG
+    //  gpio_put(PICO_DEFAULT_LED_PIN, 1);
+    //  sleep_ms(125);
+    //  gpio_put(PICO_DEFAULT_LED_PIN, 0);
+
+	// DEBUG
+	// flag_rx = 1;	// para imprimir en pantalla
+	// interface_num = instance;
+	// g_report_id = report_id;
+	// g_report_type = report_type;
+	// g_buffer = buffer;
+	// g_bufsize = bufsize;
+
+	// LED indicator is output report with only 1 byte length
+	//if (report_type != 2) return;
+
+	// The LED bit map is as follows: (also defined by KEYBOARD_LED_* )
+	// Kana (4) | Compose (3) | ScrollLock (2) | CapsLock (1) | Numlock (0)
+	//uint8_t ledIndicator = buffer[0];
+	
+	// turn on LED if capslock is set
+	//digitalWrite(LED_BUILTIN, ledIndicator & KEYBOARD_LED_CAPSLOCK);
+	//digitalWrite(LED_BUILTIN, ledIndicator & KEYBOARD_LED_NUMLOCK);
+
+    memcpy(usb_rp2040.ep1_out_buffer, buffer, bufsize);
+    usb_rp2040.dataLen = bufsize;
+    usb_rp2040.flag_rx = 1;
+}
+
+// Number of octets available on OUT endpoint.
+uint16_t Usb_rp2040::available(uint8_t ep)
+{
+    (void)ep;
+
+    return dataLen;
+}
+
 // Non-blocking receive. Returns the number of octets read, or -1 on
 // error.
 int32_t Usb_rp2040::recv(uint8_t ep, void *data, int32_t len)   // non-blocking
 {
-    uint8_t *d = (uint8_t *)data;
+    uint8_t *_data = (uint8_t *)data;
 
-    //return EPBuffers().buf(ep).pop(d, len);
-    /*
-        Invoked when received SET_REPORT control request or
-        received data on OUT endpoint ( Report ID = 0, Type = 0 )
-        void tud_hid_set_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_t report_type, uint8_t const *buffer, uint16_t bufsize)
-    */
+    memcpy(_data, ep1_out_buffer, dataLen);
 
-    return 0;
+    return dataLen;
 }
 
 // Receive one octet from OUT endpoint ‘ep’. Return the received 

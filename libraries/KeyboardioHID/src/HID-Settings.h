@@ -22,6 +22,9 @@ THE SOFTWARE.
 // Include guard
 #pragma once
 
+#ifndef __HID_SETTINGS_H__
+#define __HID_SETTINGS_H__
+
 #define HID_REPORTID_NONE 0
 
 #ifndef HID_REPORTID_MOUSE
@@ -156,11 +159,9 @@ constexpr uint16_t EP_TYPE_INTERRUPT_OUT(uint8_t buffer_size) { return EPDesc(US
 #define TRANSFER_ZERO    0x20
 #define TRANSFER_RELEASE 0x40*/
 
-Usb_rp2040 usb_rp2040;
-#define USB_SendControl         usb_rp2040.sendControl
 #define USB_RecvControl         usb_rp2040.recvControl
 #define USB_RecvControlLong     usb_rp2040.recvControlLong
-//#define USB_Available         USBCore().available
+#define USB_Available           usb_rp2040.available
 //#define USB_SendSpace         USBCore().sendSpace
 #define USB_Send                usb_rp2040.send
 #define USB_Recv                usb_rp2040.recv
@@ -185,3 +186,5 @@ Usb_rp2040 usb_rp2040;
 #error "Unsupported architecture"
 
 #endif
+
+#endif // __HID_SETTINGS_H__

@@ -83,25 +83,36 @@ bool tud_hid_n_ready(uint8_t instance)
 bool tud_hid_n_report(uint8_t instance, uint8_t report_id, void const* report, uint8_t len)
 {
   uint8_t const rhport = 0;
-  hidd_interface_t * p_hid = &_hidd_itf[instance];
+  hidd_interface_t *p_hid = &_hidd_itf[instance];
 
-  // claim endpoint
+  /*
+    claim endpoint
+
+    #define TU_VERIFY(cond)                  if(cond) return false;
+    #define TU_VERIFY(cond,ret)              if(cond) return ret;
+  */
   TU_VERIFY( usbd_edpt_claim(rhport, p_hid->ep_in) );
-
+  
   // prepare data
   if (report_id)  // If report id != 0, doesn't skip ID field.
   {
     len = tu_min8(len, CFG_TUD_HID_EP_BUFSIZE-1);
 
     p_hid->epin_buf[0] = report_id;
-    memcpy(p_hid->epin_buf+1, report, len);
+    memcpy(p_hid->epin_buf + 1, report, len);
     len++;
-  }else
+  }
+  else
   {
     // If report id = 0, skip ID field.
     len = tu_min8(len, CFG_TUD_HID_EP_BUFSIZE);
     memcpy(p_hid->epin_buf, report, len);
   }
+
+  // DEBUG
+	/*gpio_put(LED_PIN, 1);
+	sleep_ms(125);
+	gpio_put(LED_PIN, 0);*/
 
   return usbd_edpt_xfer(TUD_OPT_RHPORT, p_hid->ep_in, p_hid->epin_buf, len);
 }
