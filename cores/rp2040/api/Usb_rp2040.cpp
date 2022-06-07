@@ -2,7 +2,9 @@
 //#include "C:/Users/Juan Hauara/Documents/Arduino/hardware/wiredDefy/rp2040/libraries/Keyboard/src/Keyboard.h"
 //#include "C:/Users/Juan Hauara/Documents/Arduino/hardware/wiredDefy/rp2040/libraries/Mouse/src/Mouse.h"
 
+
 Usb_rp2040 usb_rp2040;
+
 
 Usb_rp2040::Usb_rp2040() {}
 
@@ -128,7 +130,7 @@ int USB_SendControl(uint8_t x, const void* y, uint8_t z)
     return usb_rp2040.sendControl(0, y, z);    // The parameter 'flags' (TRANSFER_PGM) is ignored
 }
 
-// kaleidoscope needs this function to be defined.
+// kaleidoscope needs this function being defined.
 void USB_PackMessages(bool pack)  // nop
 {
     (void)pack;
@@ -140,7 +142,8 @@ void USB_PackMessages(bool pack)  // nop
 ////////////////////////////////////////////////////////////////////////
 // // Invoked when received SET_REPORT control request or
 // // received data on OUT endpoint
-void tud_hid_set_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_t report_type, uint8_t const *buffer, uint16_t bufsize)
+void tud_hid_set_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_t report_type, 
+                           uint8_t const *buffer, uint16_t bufsize)
 {
     // DEBUG
     //  gpio_put(PICO_DEFAULT_LED_PIN, 1);
@@ -166,12 +169,15 @@ void tud_hid_set_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_
 	//digitalWrite(LED_BUILTIN, ledIndicator & KEYBOARD_LED_CAPSLOCK);
 	//digitalWrite(LED_BUILTIN, ledIndicator & KEYBOARD_LED_NUMLOCK);
 
-    memcpy(usb_rp2040.ep1_out_buffer, buffer, bufsize);
-    usb_rp2040.dataLen = bufsize;
-    usb_rp2040.flag_rx = 1;
+    if (report_type == TUSB_TUSB_HID_REPORT_TYPE_OUTPUT)    // OUTPUT_REPORT: PC to periferal
+    {
+        memcpy(usb_rp2040.usb.keyboard_itf.out_ep, buffer, bufsize);  // Output Endpoint: PC to Periferal.
+        usb_rp2040.dataLen = bufsize;
+        usb_rp2040.flag_rx = 1;
+    }
 }
 
-// Number of octets available on OUT endpoint.
+// Return the number of octets available on OUT endpoint.
 uint16_t Usb_rp2040::available(uint8_t ep)
 {
     (void)ep;
@@ -185,7 +191,7 @@ int32_t Usb_rp2040::recv(uint8_t ep, void *data, int32_t len)   // non-blocking
 {
     uint8_t *_data = (uint8_t *)data;
 
-    memcpy(_data, ep1_out_buffer, dataLen);
+    memcpy(_data, usb.keyboard_itf.out_ep, dataLen);  // Output Endpoint: PC to Periferal.
 
     return dataLen;
 }
@@ -225,5 +231,21 @@ int32_t Usb_rp2040::recvControlLong(void *data, int32_t len)
     (void)len;
 
     return -1;
+}
+
+// kaleidoscope needs this function being defined.
+// Returns a pointer to the Nth element of the EP buffer structure.
+void * epBuffer(unsigned int n)
+{
+    if (n == 1)
+    {
+        return (void *)&usb_rp2040.usb.keyboard_itf.in_ep;  // Input Endpoint: Periferal to PC.
+    }
+    else if (n == 2)
+    {
+        return (void *)&usb_rp2040.usb.mouse_itf.in_ep;     // Input Endpoint: Periferal to PC.
+    }
+
+    return nullptr;
 }
 ////////////////////////////////////////////////////////////////////////

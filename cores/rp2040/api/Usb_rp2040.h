@@ -13,12 +13,29 @@ extern "C"
     #include "class/hid/hid_device.h"
 }
 
+
+// Interface and End Points structures
+///////////////////////////////////////////////////////
+#define USB_RP2040_END_POINT_SIZE 300
+struct UsbInterface
+{
+    uint8_t in_ep[USB_RP2040_END_POINT_SIZE];   // Input Endpoint: Periferal to PC.
+    uint8_t out_ep[USB_RP2040_END_POINT_SIZE];  // Output Endpoint: PC to Periferal.
+};
+
+struct UsbRp2040
+{
+    struct UsbInterface keyboard_itf;   // Keyboard interface.
+    struct UsbInterface mouse_itf;      // Mouse interface.
+};
+///////////////////////////////////////////////////////
+
 class Usb_rp2040
 {
     public:
         Usb_rp2040();
 
-        uint8_t ep1_out_buffer[300];
+        struct UsbRp2040 usb;
         uint16_t dataLen = 0;
         boolean flag_rx = 0;
 

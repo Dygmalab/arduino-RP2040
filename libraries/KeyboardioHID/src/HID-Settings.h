@@ -146,7 +146,7 @@ constexpr uint16_t EP_TYPE_INTERRUPT_OUT(uint8_t buffer_size) { return EPDesc(US
 //#include <api/PluggableUSB.h>
 #include "api/Usb_rp2040.h"
 
-#define EPTYPE_DESCRIPTOR_SIZE unsigned int
+#define EPTYPE_DESCRIPTOR_SIZE uint32_t
 #define USB_EP_SIZE 64
 #define TRANSFER_PGM 0      // Error de compilación si no se define
 #define TRANSFER_RELEASE 0  // Error de compilación si no se define
